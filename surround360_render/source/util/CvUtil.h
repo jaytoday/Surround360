@@ -26,6 +26,9 @@ namespace util {
 using namespace std;
 using namespace cv;
 
+// 259: TIFF compression tag. 1: dump mode
+static const vector<int> tiffParams = {259, 1};
+
 // wrapper for cv::imread which throws an exception if loading fails
 Mat imreadExceptionOnFail(const string& filename, const int flags = IMREAD_COLOR);
 
@@ -34,6 +37,9 @@ void imwriteExceptionOnFail(
   const string& filename,
   const Mat& image,
   const vector<int>& params = vector<int>());
+
+// Converts input 8-bit image to 16-bit
+Mat convert8bitTo16bit(const Mat& inputImage);
 
 // given a vector of images, stack them horizontally or vertically to form a larger image
 Mat stackHorizontal(const std::vector<Mat>& images);
@@ -67,6 +73,12 @@ Mat flattenLayersDeghostPreferBase(
   const Mat& bottomLayer,
   const Mat& topLayer);
 
+// build a linear regression model that maps colors in imageToAdjust to
+// corresponding colors in targetImage. the model is of the form R^4->R^3.
+vector<vector<float>> buildColorAdjustmentModel(
+  const Mat& targetImage,
+  const Mat& imageToAdjust);
+
 // bottomLayer can be either 3 or 4 channel, and topLayer must be 4-channel
 template <typename BasePixelType>
 static Mat flattenLayers(
@@ -91,6 +103,16 @@ static Mat flattenLayers(
   }
   return mergedImage;
 }
+
+// Applies radial alpha mask to input image
+void radialAlphaFade(Mat& img);
+
+// Applies top-down alpha mask to input image
+void topDownAlphaFade(Mat& img);
+
+// Applies a softmax function to the input color layers
+Mat flattenLayersAlphaSoftmax(
+  const vector<Mat>& layers, const float softmaxCoef);
 
 } // namespace util
 } // namespace surround360

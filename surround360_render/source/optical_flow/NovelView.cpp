@@ -12,10 +12,10 @@
 #include <string>
 #include <vector>
 
-#include "OpticalFlowInterface.h"
-#include "OpticalFlowFactory.h"
-#include "SystemUtil.h"
 #include "CvUtil.h"
+#include "OpticalFlowFactory.h"
+#include "OpticalFlowInterface.h"
+#include "SystemUtil.h"
 
 namespace surround360 {
 namespace optical_flow {
@@ -280,9 +280,21 @@ void NovelViewGeneratorAsymmetricFlow::prepare(
 
   OpticalFlowInterface* flowAlg = makeOpticalFlowByName(flowAlgName);
   flowAlg->computeOpticalFlow(
-    imageL, imageR, prevFlowLtoR, prevColorImageL, prevColorImageR, flowLtoR);
+    imageL,
+    imageR,
+    prevFlowLtoR,
+    prevColorImageL,
+    prevColorImageR,
+    flowLtoR,
+    OpticalFlowInterface::DirectionHint::LEFT);
   flowAlg->computeOpticalFlow(
-    imageR, imageL, prevFlowRtoL, prevColorImageR, prevColorImageL, flowRtoL);
+    imageR,
+    imageL,
+    prevFlowRtoL,
+    prevColorImageR,
+    prevColorImageL,
+    flowRtoL,
+    OpticalFlowInterface::DirectionHint::RIGHT);
   delete flowAlg;
 }
 
